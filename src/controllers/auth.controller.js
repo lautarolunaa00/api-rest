@@ -52,8 +52,10 @@ const login = async (req, res) => {
         message: "Credenciales incorrectas",
       });
     }
+
     //chequear que el password coincida
     const isPasswordValid = user.comparePassword(password);
+
     if (!isPasswordValid) {
       return res.status(403).json({
         ok: false,
@@ -69,16 +71,21 @@ const login = async (req, res) => {
       });
     }
 
-    //generar el token de verificación
+    //GENERAR el token de verificación
     const token = generateToken(user._id);
-    //Guardar el token en las cookies
-    //HttpOnly
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 1000, //1hr
+    };
+
+    res.cookie("token", token, cookieOptions);
 
     //Iniciar sesión
     return res.status(200).json({
       ok: true,
       message: "Login exitoso!!",
-      token,
     });
   } catch (error) {
     return res.status(500).json({

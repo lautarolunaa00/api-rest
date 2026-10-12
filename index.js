@@ -1,10 +1,13 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { dbConnect } from "./src/config/database.js";
 import authRoutes from "./src/routes/auth.routes.js";
+
 const app = express();
 const PORT = 2001;
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
 
